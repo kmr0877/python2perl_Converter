@@ -32,3 +32,11 @@ sub get_variables{
         }
     }
 }
+
+sub end_lines{
+    foreach $row (@lines){
+        if(!($row =~ m/:\n/) and !($row eq "\n") and !($row eq "") and !($row =~ m/^#/)){
+            $row =~ s/([\w\W]*)\n/$1;\n/;
+        }
+    }
+}
