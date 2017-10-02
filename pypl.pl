@@ -41,24 +41,36 @@ sub end_lines{
     }
 }
 sub translate_code{
-    foreach $row (@lines){
-        if(!(substr($row,0,1) eq "#")){
-            foreach $var (@vars){
-                if(!($row =~ m/\"[\w\W]*$var[\w\W]*\"/) and !($row =~ m/[\w]+$var[\w\W]*/) and !($row =~ m/[\w\W]*$var[\w]+/)){
-                    $row =~ s/$var/\$$var/g;
-                }
-            }
-            if($row =~ m/break/ and !($row =~ m/\"[\w\W]*break[\w\W]*\"/)){
-                $row =~ s/break/last/;
-            }
-            if($row =~ m/^import[ ]*[\w]*/ or $row =~ m/from[ ]*[\w]*[ ]*import/){
-                $row = "";
-            }
-            if(($row =~ m/print\(/ or $row =~ m/sys.stdout.write/)){
-                $row =~ s/sys.stdout.write\(([\w\W]*)\)/print $1/;
-                $row =~ s/print[ ]*\(([\w\W]*)\)/print $1,"\\n";/;
-            }
-        }
-    }
+	foreach $row (@lines){
+		if(!(substr($row,0,1) eq "#")){
+			foreach $var (@vars){
+				while($row =~ m/([^\w\$]+[ ]*)($var)([ ]*[^\w\$]+)(?=(?:[^"]*"[^"]*")*[^"]*$)/){
+					$row =~ s/([^\w\$]+[ ]*)($var)([ ]*[^\w\$]+)(?=(?:[^"]*"[^"]*")*[^"]*$)/$1\$$2$3/g;
+				}
+				$row =~ s/^($var)([ ]*=)/\$$1$2/g;
+			}
+			if($row =~ m/break/ and !($row =~ m/\"[\w\W]*break[\w\W]*\"/)){
+				$row =~ s/break/last/;
+			}
+			if($row =~ m/^import[ ]*[\w]*/ or $row =~ m/from[ ]*[\w]*[ ]*import/){
+				$row = "";
+			}
+			if(($row =~ m/print\(/ or $row =~ m/sys.stdout.write/)){
+				$row =~ s/sys.stdout.write\(([\w\W]*)\)/print $1/;
+				$row =~ m/print[ ]*\(([\w\W]*)\)/;
+				$tmp = $1;
+				if ( $tmp eq ""){
+				$row =~ s/print[ ]*\(([\w\W]*)\)/print "\\n"/;
 
+				}
+				else{
+				$row =~ s/print[ ]*\(([\w\W]*)\)/print $tmp,"\\n"/;
+			}
+				
+			}	
+			if($row =~ m/sys.stdin.readline/){
+				$row =~ s/=[\w\W]*\(sys.stdin.readline\(([\w\W]*)\)\)/= <STDIN>/;
+			}
+		}
+	}
 }
