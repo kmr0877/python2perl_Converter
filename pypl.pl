@@ -74,3 +74,21 @@ sub translate_code{
 		}
 	}
 }
+sub fix_if{
+    foreach $i (0 .. $#lines){
+        if($lines[$i] =~ m/([ ]*)elif[ ]*[\w\W]*:/){
+            $tab = $1;
+            $bracket = 0;
+            $lines[$i] =~ s/([ ]*)elif[ ]*([\w\W]*):/$1elsif\($2\)\{/;
+            foreach $j (($i+1) .. $#lines){
+                $lines[$j] =~ m/([ ]*)\w/;
+                if(length($tab) >= length($1)){
+                    $lines[$j] = "}".$lines[$j];
+                    $bracket = 1;
+                    last;
+                }
+            }
+            if($bracket == 0){
+                    $lines[$#lines] = $lines[$#lines]."}";
+            }
+        }
