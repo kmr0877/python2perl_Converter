@@ -92,3 +92,19 @@ sub fix_if{
                     $lines[$#lines] = $lines[$#lines]."}";
             }
         }
+	if($lines[$i] =~ m/([ ]*)if[ ]*[\w\W]*:/){
+            $tab = $1;
+            $bracket = 0;
+            $lines[$i] =~ s/([ ]*)if[ ]*([\w\W]*):/$1if\($2\)\{/;
+            foreach $j (($i+1) .. $#lines){
+                $lines[$j] =~ m/([ ]*)\w/;
+                if(length($tab) >= length($1)){
+                    $lines[$j] = "}".$lines[$j];
+                    $bracket = 1;
+                    last;
+                }
+            }
+            if($bracket == 0){
+                    $lines[$#lines] = $lines[$#lines]."}";
+            }
+        }
