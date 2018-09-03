@@ -2,7 +2,7 @@
 
 ## _Introduction_
 
-Our task is to write a Python compiler. Generally compilers take a high level language as input and output assembler, which can then can be directly executed. Your compiler will take a Python script as input and output a Perl script. Such a translation is useful because programmers sometimes need to convert Python scripts to Perl.
+The main aim of this project is to write a Python compiler. Generally compilers take a high level language as input and output assembler, which can then can be directly executed. Our compiler will take a Python script as input and output a Perl script. Such a translation is useful because programmers sometimes need to convert Python scripts to Perl.
 
 Possible reasons for this include integration of existing Python code into a Perl program and shifting a complete Python program to a new platform which requires Perl.
 Our task is to automate this conversion. We will be writing a Perl program which takes as input a Python script and outputs an equivalent Perl program.
